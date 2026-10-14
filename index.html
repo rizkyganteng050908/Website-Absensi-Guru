@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Absensi Guru - DKI Jakarta (WIB)</title>
+    <title>Sistem Absensi Guru - Login & WIB</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome Icons -->
@@ -11,151 +11,210 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-    <!-- Header / Navbar -->
-    <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-school-flag text-2xl"></i>
+    <!-- ================= 1. HALAMAN LOGIN ================= -->
+    <div id="authPage" class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl mb-4 shadow-sm">
+                    <i class="fa-solid fa-school-flag text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Sistem Absensi Guru</h1>
+                <p class="text-sm text-gray-500 mt-1">Silakan masuk sesuai peran (Role) Anda</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-5">
                 <div>
-                    <h1 class="text-xl font-bold">Sistem Absensi Guru</h1>
-                    <p class="text-xs text-indigo-200">Zona Waktu: Waktu Indonesia Barat (WIB)</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Peran (Role)</label>
+                    <select id="loginRole" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="guru">Guru (Pengisi Absen)</option>
+                        <option value="admin">Admin (Rekap & Kelola)</option>
+                    </select>
                 </div>
-            </div>
 
-            <!-- Jam Digital WIB -->
-            <div class="bg-indigo-700/80 px-4 py-2 rounded-xl border border-indigo-500/50 flex items-center space-x-3 shadow-inner">
-                <i class="fa-regular fa-clock text-indigo-300"></i>
-                <div class="text-right">
-                    <div id="jamDigital" class="text-lg font-mono font-bold tracking-wider">00:00:00 WIB</div>
-                    <div id="tanggalDigital" class="text-xs text-indigo-200">Senin, 01 Januari 2026</div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username / ID Pengguna</label>
+                    <input type="text" id="loginUsername" required placeholder="Masukkan username..." 
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                 </div>
-            </div>
 
-            <div class="space-x-2">
-                <button onclick="switchTab('form')" id="btnTabForm" class="bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer shadow-sm">
-                    <i class="fa-solid fa-pen-to-square mr-1"></i> Form Absen
-                </button>
-                <button onclick="switchTab('rekap')" id="btnTabRekap" class="bg-indigo-800/50 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer">
-                    <i class="fa-solid fa-table-list mr-1"></i> Rekap Absensi
-                </button>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi (Password)</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" 
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition shadow-md cursor-pointer">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i> Masuk Sistem
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6 p-3 bg-gray-50 rounded-lg text-xs text-gray-500 space-y-1">
+                <p class="font-semibold text-gray-600">Info Akses Uji Coba:</p>
+                <p>• <strong>Guru:</strong> Pilih role Guru, bebas isi username/password.</p>
+                <p>• <strong>Admin:</strong> Pilih role Admin, isi username <code class="text-indigo-600 font-mono">admin</code> & password <code class="text-indigo-600 font-mono">admin123</code></p>
             </div>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-
-        <!-- TAB 1: FORM ABSENSI GURU -->
-        <section id="tabForm" class="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-            <div class="mb-6 border-b pb-4">
-                <h2 class="text-2xl font-bold text-gray-800">Form Kehadiran Guru</h2>
-                <p class="text-sm text-gray-500">Silakan isi formulir kehadiran mengajar hari ini.</p>
-            </div>
-
-            <form id="formAbsen" onsubmit="handleAbsenSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap Guru & Gelar</label>
-                    <input type="text" id="namaGuru" required placeholder="Contoh: Budi Santoso, S.Pd." 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
-                    <input type="text" id="mapel" required placeholder="Contoh: Matematika" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- ================= 2. HALAMAN UTAMA APLIKASI (DASHBOARD) ================= -->
+    <div id="appPage" class="hidden min-h-screen flex flex-col">
+        <!-- Header / Navbar -->
+        <header class="bg-indigo-600 text-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-school-flag text-2xl"></i>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Kelas / Ruangan</label>
-                        <input type="text" id="kelas" required placeholder="Contoh: Kelas X MIPA 1" 
+                        <h1 class="text-xl font-bold">Sistem Absensi Guru</h1>
+                        <p class="text-xs text-indigo-200">Zona Waktu: Waktu Indonesia Barat (WIB)</p>
+                    </div>
+                </div>
+
+                <!-- Jam Digital WIB -->
+                <div class="bg-indigo-700/80 px-4 py-2 rounded-xl border border-indigo-500/50 flex items-center space-x-3 shadow-inner">
+                    <i class="fa-regular fa-clock text-indigo-300"></i>
+                    <div class="text-right">
+                        <div id="jamDigital" class="text-lg font-mono font-bold tracking-wider">00:00:00 WIB</div>
+                        <div id="tanggalDigital" class="text-xs text-indigo-200">Senin, 01 Januari 2026</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <div id="navButtons" class="space-x-2">
+                        <!-- Tombol navigasi dinamis berdasarkan role -->
+                    </div>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition cursor-pointer shadow-sm" title="Keluar">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+
+            <!-- TAB 1: FORM ABSENSI GURU -->
+            <section id="tabForm" class="max-w-xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <div class="mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Form Kehadiran Guru</h2>
+                    <p class="text-sm text-gray-500">Silakan isi formulir kehadiran mengajar hari ini.</p>
+                </div>
+
+                <form id="formAbsen" onsubmit="handleAbsenSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap Guru & Gelar</label>
+                        <input type="text" id="namaGuru" required placeholder="Contoh: Budi Santoso, S.Pd." 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
+
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status Kehadiran</label>
-                        <select id="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="Hadir">Hadir</option>
-                            <option value="Izin">Izin</option>
-                            <option value="Sakit">Sakit</option>
-                            <option value="Tugas Dinas">Tugas Dinas</option>
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mata Pelajaran</label>
+                        <input type="text" id="mapel" required placeholder="Contoh: Matematika" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Kelas / Ruangan</label>
+                            <input type="text" id="kelas" required placeholder="Contoh: Kelas X MIPA 1" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Kehadiran</label>
+                            <select id="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                                <option value="Hadir">Hadir</option>
+                                <option value="Izin">Izin</option>
+                                <option value="Sakit">Sakit</option>
+                                <option value="Tugas Dinas">Tugas Dinas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Keterangan / Catatan (Opsional)</label>
+                        <textarea id="keterangan" rows="3" placeholder="Catatan tambahan jika ada..." 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition shadow-md cursor-pointer">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Absensi
+                    </button>
+                </form>
+            </section>
+
+            <!-- TAB 2: REKAP ABSENSI (ADMIN) -->
+            <section id="tabRekap" class="hidden space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Rekapitulasi Absensi Guru</h2>
+                        <p class="text-sm text-gray-500">Daftar seluruh catatan kehadiran guru yang masuk.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <input type="date" id="filterTanggal" onchange="renderRekap()" 
+                            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <button onclick="resetFilter()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition cursor-pointer">
+                            Reset Filter
+                        </button>
+                        <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition cursor-pointer shadow-sm">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Ekspor CSV
+                        </button>
+                        <button onclick="hapusSemuaData()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm transition cursor-pointer">
+                            <i class="fa-solid fa-trash mr-1"></i> Hapus Semua
+                        </button>
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Keterangan / Catatan (Opsional)</label>
-                    <textarea id="keterangan" rows="3" placeholder="Catatan tambahan jika ada..." 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                <!-- Tabel Data -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider border-b">
+                                    <th class="px-6 py-4">Waktu (WIB)</th>
+                                    <th class="px-6 py-4">Nama Guru</th>
+                                    <th class="px-6 py-4">Mata Pelajaran</th>
+                                    <th class="px-6 py-4">Kelas</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4">Keterangan</th>
+                                    <th class="px-6 py-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelAbsensi" class="divide-y divide-gray-200 text-sm text-gray-700">
+                                <!-- Data akan dimuat lewat Javascript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pesan Jika Kosong -->
+                    <div id="emptyState" class="hidden py-12 text-center text-gray-400">
+                        <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
+                        <p>Belum ada data absensi yang tercatat.</p>
+                    </div>
                 </div>
+            </section>
 
-                <button type="submit" id="btnSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg transition shadow-md cursor-pointer">
-                    <i class="fa-solid fa-paper-plane mr-2"></i> Kirim Absensi
-                </button>
-            </form>
-        </section>
+        </main>
+    </div>
 
-        <!-- TAB 2: REKAP ABSENSI (ADMIN) -->
-        <section id="tabRekap" class="hidden space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Rekapitulasi Absensi Guru</h2>
-                    <p class="text-sm text-gray-500">Daftar seluruh catatan kehadiran guru yang masuk.</p>
-                </div>
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <input type="date" id="filterTanggal" onchange="renderRekap()" 
-                        class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    <button onclick="resetFilter()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition cursor-pointer">
-                        Reset Filter
-                    </button>
-                    <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-file-excel mr-1"></i> Ekspor CSV
-                    </button>
-                    <button onclick="hapusSemuaData()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm transition cursor-pointer">
-                        <i class="fa-solid fa-trash mr-1"></i> Hapus Semua
-                    </button>
-                </div>
-            </div>
-
-            <!-- Tabel Data -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider border-b">
-                                <th class="px-6 py-4">Waktu (WIB)</th>
-                                <th class="px-6 py-4">Nama Guru</th>
-                                <th class="px-6 py-4">Mata Pelajaran</th>
-                                <th class="px-6 py-4">Kelas</th>
-                                <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4">Keterangan</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelAbsensi" class="divide-y divide-gray-200 text-sm text-gray-700">
-                            <!-- Data akan dimuat lewat Javascript -->
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Pesan Jika Kosong -->
-                <div id="emptyState" class="hidden py-12 text-center text-gray-400">
-                    <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
-                    <p>Belum ada data absensi yang tercatat.</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- JavaScript Logika Sistem -->
+    <!-- JavaScript Logika Sistem & Login -->
     <script>
-        // Inisialisasi data dari LocalStorage
         let dataAbsensi = JSON.parse(localStorage.getItem('absensi_guru')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('current_user')) || null;
 
-        // Fungsi Jam Digital Real-Time WIB (DKI Jakarta)
+        // Cek sesi login saat halaman dimuat
+        window.onload = function() {
+            if (currentUser) {
+                tampilkanDashboard(currentUser.role);
+            } else {
+                tampilkanLogin();
+            }
+            updateJamWIB();
+            setInterval(updateJamWIB, 1000);
+        };
+
+        // Fungsi Jam Digital Real-Time WIB
         function updateJamWIB() {
             const now = new Date();
-            
-            // Format waktu Indonesia (WIB)
             const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
             const optionsDate = { timeZone: 'Asia/Jakarta', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -169,27 +228,85 @@
             if (tglEl) tglEl.innerText = dateString;
         }
 
-        // Jalankan jam digital setiap detik
-        setInterval(updateJamWIB, 1000);
-        updateJamWIB(); // Panggil sekali di awal
+        // Handle Login
+        function handleLogin(event) {
+            event.preventDefault();
+            const role = document.getElementById('loginRole').value;
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
 
-        // Fungsi Navigasi Tab
+            // Validasi sederhana untuk Admin
+            if (role === 'admin') {
+                if (username !== 'admin' || password !== 'admin123') {
+                    alert('Username atau Password Admin salah! (Gunakan: admin / admin123)');
+                    return;
+                }
+            } else {
+                if (!username) {
+                    alert('Mohon masukkan username Anda.');
+                    return;
+                }
+            }
+
+            currentUser = { role, username };
+            localStorage.setItem('current_user', JSON.stringify(currentUser));
+            tampilkanDashboard(role);
+        }
+
+        // Tampilkan Dashboard Berdasarkan Role
+        function tampilkanDashboard(role) {
+            document.getElementById('authPage').classList.add('hidden');
+            document.getElementById('appPage').classList.remove('hidden');
+
+            const navButtons = document.getElementById('navButtons');
+            navButtons.innerHTML = '';
+
+            if (role === 'guru') {
+                // Guru hanya bisa akses form absen
+                navButtons.innerHTML = `
+                    <button onclick="switchTab('form')" id="btnTabForm" class="bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                        <i class="fa-solid fa-pen-to-square mr-1"></i> Form Absen
+                    </button>
+                `;
+                switchTab('form');
+            } else if (role === 'admin') {
+                // Admin bisa akses rekap, form dialihkan atau disembunyikan sesuai kebutuhan
+                navButtons.innerHTML = `
+                    <button onclick="switchTab('rekap')" id="btnTabRekap" class="bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm">
+                        <i class="fa-solid fa-table-list mr-1"></i> Rekap Absensi
+                    </button>
+                `;
+                switchTab('rekap');
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
+                localStorage.removeItem('current_user');
+                currentUser = null;
+                tampilkanLogin();
+            }
+        }
+
+        function tampilkanLogin() {
+            document.getElementById('appPage').classList.add('hidden');
+            document.getElementById('authPage').classList.remove('hidden');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // Fungsi Navigasi Tab di Dashboard
         function switchTab(tab) {
             const tabForm = document.getElementById('tabForm');
             const tabRekap = document.getElementById('tabRekap');
-            const btnForm = document.getElementById('btnTabForm');
-            const btnRekap = document.getElementById('btnTabRekap');
 
             if (tab === 'form') {
-                tabForm.classList.remove('hidden');
-                tabRekap.classList.add('hidden');
-                btnForm.className = "bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer shadow-sm";
-                btnRekap.className = "bg-indigo-800/50 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer";
+                if (tabForm) tabForm.classList.remove('hidden');
+                if (tabRekap) tabRekap.classList.add('hidden');
             } else {
-                tabForm.classList.add('hidden');
-                tabRekap.classList.remove('hidden');
-                btnRekap.className = "bg-indigo-700 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer shadow-sm";
-                btnForm.className = "bg-indigo-800/50 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition cursor-pointer";
+                if (tabForm) tabForm.classList.add('hidden');
+                if (tabRekap) tabRekap.classList.remove('hidden');
                 renderRekap();
             }
         }
@@ -199,9 +316,7 @@
             event.preventDefault();
 
             const now = new Date();
-            
-            // Ambil tanggal & waktu sesuai zona waktu Asia/Jakarta (WIB)
-            const tanggalStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(now); // format YYYY-MM-DD
+            const tanggalStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta' }).format(now);
             const jamStr = new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
 
             const itemBaru = {
@@ -215,16 +330,11 @@
                 keterangan: document.getElementById('keterangan').value || '-'
             };
 
-            dataAbsensi.unshift(itemBaru); // Masukkan ke urutan paling atas
+            dataAbsensi.unshift(itemBaru);
             localStorage.setItem('absensi_guru', JSON.stringify(dataAbsensi));
 
             alert('Absensi berhasil dikirim!');
-            
-            // Reset form dengan aman
             document.getElementById('formAbsen').reset();
-            
-            // Pindah ke tab rekap
-            switchTab('rekap');
         }
 
         // Render Tabel Rekap
@@ -233,9 +343,9 @@
             const emptyState = document.getElementById('emptyState');
             const filterTanggal = document.getElementById('filterTanggal').value;
 
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            // Filter data jika tanggal dipilih
             let filteredData = dataAbsensi;
             if (filterTanggal) {
                 filteredData = dataAbsensi.filter(item => item.tanggal === filterTanggal);
