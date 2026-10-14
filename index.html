@@ -193,7 +193,6 @@
         let dataAbsensi = JSON.parse(localStorage.getItem('absensi_guru')) || [];
         let currentUser = JSON.parse(localStorage.getItem('current_user')) || null;
 
-        // Cek sesi login saat halaman dimuat
         window.onload = function() {
             if (currentUser) {
                 tampilkanDashboard(currentUser.role);
@@ -204,7 +203,6 @@
             setInterval(updateJamWIB, 1000);
         };
 
-        // Fungsi Jam Digital Real-Time WIB
         function updateJamWIB() {
             const now = new Date();
             const optionsTime = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
@@ -220,21 +218,16 @@
             if (tglEl) tglEl.innerText = dateString;
         }
 
-        // Handle Login sesuai Kredensial Permintaan
         function handleLogin(event) {
             event.preventDefault();
             const usernameInput = document.getElementById('loginUsername').value.trim();
             const passwordInput = document.getElementById('loginPassword').value;
 
-            // Validasi Kredensial Admin
             if (usernameInput === 'Admin' && passwordInput === 'Admin123') {
                 currentUser = { role: 'admin', username: 'Admin' };
-            } 
-            // Validasi Kredensial Guru
-            else if (usernameInput === 'Guru' && passwordInput === 'Guru') {
+            } else if (usernameInput === 'Guru' && passwordInput === 'Guru') {
                 currentUser = { role: 'guru', username: 'Guru' };
-            } 
-            else {
+            } else {
                 alert('Username atau Password salah!\n\nGunakan:\n- Guru: Guru / Guru\n- Admin: Admin / Admin123');
                 return;
             }
@@ -243,7 +236,6 @@
             tampilkanDashboard(currentUser.role);
         }
 
-        // Tampilkan Dashboard Berdasarkan Role
         function tampilkanDashboard(role) {
             document.getElementById('authPage').classList.add('hidden');
             document.getElementById('appPage').classList.remove('hidden');
@@ -268,7 +260,6 @@
             }
         }
 
-        // Logout
         function logout() {
             if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
                 localStorage.removeItem('current_user');
@@ -284,7 +275,6 @@
             document.getElementById('loginPassword').value = '';
         }
 
-        // Fungsi Navigasi Tab di Dashboard
         function switchTab(tab) {
             const tabForm = document.getElementById('tabForm');
             const tabRekap = document.getElementById('tabRekap');
@@ -299,7 +289,6 @@
             }
         }
 
-        // Handle Submit Form Absen dengan Waktu Akurat WIB
         function handleAbsenSubmit(event) {
             event.preventDefault();
 
@@ -325,7 +314,6 @@
             document.getElementById('formAbsen').reset();
         }
 
-        // Render Tabel Rekap
         function renderRekap() {
             const tbody = document.getElementById('tabelAbsensi');
             const emptyState = document.getElementById('emptyState');
@@ -373,7 +361,6 @@
             });
         }
 
-        // Hapus Satu Item Data
         function hapusItem(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data absensi ini?')) {
                 dataAbsensi = dataAbsensi.filter(item => item.id !== id);
@@ -382,13 +369,11 @@
             }
         }
 
-        // Reset Filter Tanggal
         function resetFilter() {
             document.getElementById('filterTanggal').value = '';
             renderRekap();
         }
 
-        // Hapus Semua Data
         function hapusSemuaData() {
             if (confirm('PERINGATAN: Semua data rekapitulasi absensi akan dihapus permanen! Lanjutkan?')) {
                 dataAbsensi = [];
@@ -397,7 +382,6 @@
             }
         }
 
-        // Ekspor ke CSV
         function exportToCSV() {
             if (dataAbsensi.length === 0) {
                 alert('Tidak ada data untuk diekspor!');
